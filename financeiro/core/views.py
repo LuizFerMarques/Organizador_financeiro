@@ -1,6 +1,25 @@
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render, redirect
 from.models import Transacao, Categoria
 from django.db.models import Sum
+from rest_framework.viewsets import ModelViewSet
+from .models import Categoria
+from .serializers import CategoriaSerializer, TransacaoSerializer
+
+## Exibe o resumo financeiro do usuário. ##
+
+class CategoriaViewSet(ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+class TransacaoViewSet(ModelViewSet):
+    queryset = Transacao.objects.all()
+    serializer_class = TransacaoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
+
 
 
 def dashboard(request):
